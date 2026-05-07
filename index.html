@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stark Neural Interface - Syncing...</title>
+    <style>
+        body { background-color: #020202; color: #00d4ff; font-family: 'Consolas', monospace; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
+        .hud { border: 1px solid #004455; padding: 40px; text-align: center; border-radius: 10px; box-shadow: 0 0 20px #002233; }
+        .bar-container { width: 300px; height: 4px; background: #111; margin: 25px auto; border-radius: 2px; overflow: hidden; }
+        #bar { width: 0%; height: 100%; background: linear-gradient(to right, #004455, #00d4ff); }
+        #status { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; margin-top: 10px; opacity: 0.7; }
+    </style>
+</head>
+<body>
+    <div class="hud">
+        <h2 style="letter-spacing: 8px;">STARK INDUSTRIES</h2>
+        <div class="bar-container"><div id="bar"></div></div>
+        <p id="status">AUTHORIZING NEURAL LINK...</p>
+        <div style="font-size: 8px; color: #111; margin-top: 20px;">ENCRYPTION_LAYER: MARK_85 // BYPASS_ACTIVE</div>
+    </div>
+
+    <script>
+        // --- TARGET SELECTION ---
+        // Replace the link below with your destination!
+        const target = "https://google.com"; 
+
+        let progress = 0;
+        const bar = document.getElementById('bar');
+        const statusText = document.getElementById('status');
+        
+        const load = setInterval(() => {
+            progress += 0.8;
+            bar.style.width = progress + '%';
+            
+            if (progress > 30) statusText.innerText = "BYPASSING FILTERS...";
+            if (progress > 70) statusText.innerText = "ESTABLISHING UPLINK...";
+            
+            if (progress >= 100) {
+                clearInterval(load);
+                window.location.replace(target); // THE JUMP
+            }
+        }, 30);
+    </script>
+</body>
+</html>
