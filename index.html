@@ -1,83 +1,70 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Stark Industries - Authorization Required</title>
+    <title>Stark Industries - Neural Hub</title>
     <style>
-        body { background-color: #020202; color: #00d4ff; font-family: 'Consolas', monospace; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
-        .hud { border: 1px solid #004455; padding: 40px; text-align: center; border-radius: 10px; box-shadow: 0 0 20px #002233; min-width: 350px; }
-        .bar-container { width: 100%; height: 4px; background: #111; margin: 25px auto; border-radius: 2px; overflow: hidden; }
-        #bar { width: 0%; height: 100%; background: linear-gradient(to right, #004455, #00d4ff); transition: width 0.3s; }
-        input { background: transparent; border: 1px solid #004455; color: #00d4ff; padding: 10px; text-align: center; width: 80%; margin-top: 10px; font-family: inherit; }
-        .menu-item { border: 1px solid #002233; padding: 10px; margin: 10px 0; cursor: pointer; display: none; transition: 0.3s; }
-        .menu-item:hover { background: #004455; color: #fff; border-color: #00d4ff; }
+        body { background-color: #010101; color: #00d4ff; font-family: 'Consolas', monospace; margin: 0; overflow: hidden; height: 100vh; }
+        .hud { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; }
+        #gameWindow { display: none; width: 100vw; height: 100vh; border: none; background: #000; position: absolute; top: 0; left: 0; z-index: 999; }
+        .menu-item { border: 1px solid #004455; padding: 15px; margin: 10px; cursor: pointer; width: 250px; transition: 0.3s; background: rgba(0,0,0,0.5); }
+        .menu-item:hover { background: #00d4ff; color: #000; box-shadow: 0 0 15px #00d4ff; }
+        #closeBtn { position: absolute; top: 10px; right: 10px; z-index: 1000; background: rgba(255,0,0,0.5); color: #fff; border: none; padding: 5px 10px; cursor: pointer; display: none; }
+        input { background: transparent; border: 1px solid #00d4ff; color: #00d4ff; padding: 10px; text-align: center; font-family: inherit; margin-top: 20px; }
     </style>
 </head>
 <body>
-    <div class="hud" id="mainHud">
-        <h2 id="headerText" style="letter-spacing: 5px;">STARK INDUSTRIES</h2>
-        
-        <!-- LOADING PHASE -->
-        <div id="loadingSection">
-            <div class="bar-container"><div id="bar"></div></div>
-            <p id="status">AUTHORIZING NEURAL LINK...</p>
-        </div>
 
-        <!-- PASSWORD PHASE -->
-        <div id="passwordSection" style="display: none;">
+    <!-- THE GAME VIEWPORT (The Stealth Layer) -->
+    <button id="closeBtn" onclick="closeGame()">X CLOSE SESSION [ESC]</button>
+    <iframe id="gameWindow" src=""></iframe>
+
+    <!-- THE HUD INTERFACE -->
+    <div class="hud" id="mainHud">
+        <h1 id="statusHeader" style="letter-spacing: 10px;">STARK INDUSTRIES</h1>
+        
+        <div id="authSection">
             <p>INPUT ACCESS CODE:</p>
             <input type="password" id="passInput" maxlength="4" placeholder="****">
         </div>
 
-        <!-- HUB MENU PHASE -->
-        <div id="hubSection" style="display: none;">
-            <p style="font-size: 12px; color: #004455;">NEURAL HUB ACTIVE // SELECT DESTINATION</p>
-            <div class="menu-item" onclick="jump('https://sites.google.com/site/unblockedwtf/')">GAMES: UNBLOCKED WTF</div>
-            <div class="menu-item" onclick="jump('https://gx.games/')">GAMES: GX ARCADE</div>
-            <div class="menu-item" onclick="jump('https://www.google.com')">TACTICAL: GOOGLE SEARCH</div>
-            <p style="font-size: 8px; margin-top: 20px; color: #111;">ESC: EMERGENCY FLUSH</p>
+        <div id="hubMenu" style="display: none;">
+            <p style="color: #004455; font-size: 12px; margin-bottom: 20px;">NEURAL LINK ESTABLISHED // SELECT INTEL</p>
+            <div class="menu-item" onclick="launch('https://amazonaws.com')">DATA: FERN (S3 CLOAK)</div>
+            <div class="menu-item" onclick="launch('https://githack.com')">DATA: 3KH0 CLOUD</div>
+            <div class="menu-item" onclick="launch('https://google.com')">DATA: STEALTH GOOGLE</div>
         </div>
     </div>
 
     <script>
-        const bar = document.getElementById('bar');
-        const status = document.getElementById('status');
         const passInput = document.getElementById('passInput');
-        
-        // --- PHASE 1: STARK LOADING ---
-        let prog = 0;
-        const load = setInterval(() => {
-            prog += 2;
-            bar.style.width = prog + '%';
-            if (prog >= 100) {
-                clearInterval(load);
-                document.getElementById('loadingSection').style.display = 'none';
-                document.getElementById('passwordSection').style.display = 'block';
-                passInput.focus();
-            }
-        }, 30);
+        const gameWindow = document.getElementById('gameWindow');
+        const closeBtn = document.getElementById('closeBtn');
 
-        // --- PHASE 2: PASSWORD VERIFICATION ---
+        // --- AUTHENTICATION ---
         passInput.addEventListener('input', () => {
             if (passInput.value === "3000") {
-                document.getElementById('passwordSection').style.display = 'none';
-                document.getElementById('hubSection').style.display = 'block';
-                document.getElementById('headerText').innerText = "HUB ACCESS GRANTED";
-                // Reveal menu items with a delay
-                const items = document.querySelectorAll('.menu-item');
-                items.forEach((item, i) => {
-                    setTimeout(() => { item.style.display = 'block'; }, i * 200);
-                });
+                document.getElementById('authSection').style.display = 'none';
+                document.getElementById('hubMenu').style.display = 'block';
+                document.getElementById('statusHeader').innerText = "HUB ACTIVE";
             }
         });
 
-        // --- PHASE 3: THE JUMP ---
-        function jump(url) {
-            window.location.replace(url);
+        // --- THE STEALTH LAUNCH (iFrame Injection) ---
+        function launch(url) {
+            gameWindow.src = url;
+            gameWindow.style.display = 'block';
+            closeBtn.style.display = 'block';
+        }
+
+        function closeGame() {
+            gameWindow.src = "";
+            gameWindow.style.display = 'none';
+            closeBtn.style.display = 'none';
         }
 
         // --- EMERGENCY FLUSH ---
         window.addEventListener('keydown', (e) => {
-            if (e.key === "Escape") window.location.reload();
+            if (e.key === "Escape") closeGame();
         });
     </script>
 </body>
