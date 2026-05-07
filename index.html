@@ -6,32 +6,34 @@
         body { background-color: #010101; color: #00d4ff; font-family: 'Consolas', monospace; margin: 0; overflow: hidden; height: 100vh; }
         .hud { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; }
         #gameWindow { display: none; width: 100vw; height: 100vh; border: none; background: #000; position: absolute; top: 0; left: 0; z-index: 999; }
-        .menu-item { border: 1px solid #004455; padding: 15px; margin: 10px; cursor: pointer; width: 250px; transition: 0.3s; background: rgba(0,0,0,0.5); }
+        .menu-item { border: 1px solid #004455; padding: 15px; margin: 10px; cursor: pointer; width: 280px; transition: 0.3s; background: rgba(0,0,0,0.8); display: none; }
         .menu-item:hover { background: #00d4ff; color: #000; box-shadow: 0 0 15px #00d4ff; }
-        #closeBtn { position: absolute; top: 10px; right: 10px; z-index: 1000; background: rgba(255,0,0,0.5); color: #fff; border: none; padding: 5px 10px; cursor: pointer; display: none; }
-        input { background: transparent; border: 1px solid #00d4ff; color: #00d4ff; padding: 10px; text-align: center; font-family: inherit; margin-top: 20px; }
+        #closeBtn { position: absolute; top: 10px; right: 10px; z-index: 1000; background: rgba(255,0,0,0.7); color: #fff; border: 1px solid white; padding: 8px 15px; cursor: pointer; display: none; font-family: inherit; }
+        input { background: transparent; border: 1px solid #00d4ff; color: #00d4ff; padding: 10px; text-align: center; font-family: inherit; margin-top: 20px; outline: none; }
+        #statusHeader { letter-spacing: 10px; filter: drop-shadow(0 0 5px #00d4ff); }
     </style>
 </head>
 <body>
 
-    <!-- THE GAME VIEWPORT (The Stealth Layer) -->
-    <button id="closeBtn" onclick="closeGame()">X CLOSE SESSION [ESC]</button>
+    <!-- THE STEALTH LAYER -->
+    <button id="closeBtn" onclick="closeGame()">X DISCONNECT SESSION [ESC]</button>
     <iframe id="gameWindow" src=""></iframe>
 
     <!-- THE HUD INTERFACE -->
     <div class="hud" id="mainHud">
-        <h1 id="statusHeader" style="letter-spacing: 10px;">STARK INDUSTRIES</h1>
+        <h1 id="statusHeader">STARK INDUSTRIES</h1>
         
         <div id="authSection">
-            <p>INPUT ACCESS CODE:</p>
-            <input type="password" id="passInput" maxlength="4" placeholder="****">
+            <p style="font-size: 12px; letter-spacing: 2px;">AUTHORIZATION REQUIRED</p>
+            <input type="password" id="passInput" maxlength="4" placeholder="CODE">
         </div>
 
-        <div id="hubMenu" style="display: none;">
-            <p style="color: #004455; font-size: 12px; margin-bottom: 20px;">NEURAL LINK ESTABLISHED // SELECT INTEL</p>
-            <div class="menu-item" onclick="launch('https://amazonaws.com')">DATA: FERN (S3 CLOAK)</div>
-            <div class="menu-item" onclick="launch('https://githack.com')">DATA: 3KH0 CLOUD</div>
-            <div class="menu-item" onclick="launch('https://google.com')">DATA: STEALTH GOOGLE</div>
+        <div id="hubMenu">
+            <p id="subHeader" style="color: #004455; font-size: 12px; margin-bottom: 20px; display: none;">NEURAL LINK ESTABLISHED // ACCESS GRANTED</p>
+            <!-- BUTTONS (URLs must be inside quotes) -->
+            <div class="menu-item" onclick="launch('https://pages.dev')">INTELLIGENCE: 3KH0 CLOUD</div>
+            <div class="menu-item" onclick="launch('https://githack.com')">INTELLIGENCE: GITHACK ASSETS</div>
+            <div class="menu-item" onclick="launch('https://bing.com')">INTELLIGENCE: BING SEARCH</div>
         </div>
     </div>
 
@@ -40,29 +42,41 @@
         const gameWindow = document.getElementById('gameWindow');
         const closeBtn = document.getElementById('closeBtn');
 
-        // --- AUTHENTICATION ---
+        // --- 1. THE EXIT CONFIRMATION ---
+        window.onbeforeunload = function() {
+            return "Are you sure you want to leave Stark Industries? Neural Link will be severed.";
+        };
+
+        // --- 2. AUTHENTICATION LOGIC ---
         passInput.addEventListener('input', () => {
             if (passInput.value === "3000") {
                 document.getElementById('authSection').style.display = 'none';
-                document.getElementById('hubMenu').style.display = 'block';
+                document.getElementById('subHeader').style.display = 'block';
                 document.getElementById('statusHeader').innerText = "HUB ACTIVE";
+                
+                // Show buttons properly
+                const items = document.querySelectorAll('.menu-item');
+                items.forEach((item, i) => {
+                    setTimeout(() => { item.style.display = 'block'; }, i * 150);
+                });
             }
         });
 
-        // --- THE STEALTH LAUNCH (iFrame Injection) ---
+        // --- 3. LAUNCH LOGIC (iFrame) ---
         function launch(url) {
+            console.log("Launching: " + url);
             gameWindow.src = url;
             gameWindow.style.display = 'block';
             closeBtn.style.display = 'block';
         }
 
         function closeGame() {
-            gameWindow.src = "";
+            gameWindow.src = "about:blank"; // Clears the game out of memory
             gameWindow.style.display = 'none';
             closeBtn.style.display = 'none';
         }
 
-        // --- EMERGENCY FLUSH ---
+        // --- 4. KEYBOARD SHORTCUTS ---
         window.addEventListener('keydown', (e) => {
             if (e.key === "Escape") closeGame();
         });
